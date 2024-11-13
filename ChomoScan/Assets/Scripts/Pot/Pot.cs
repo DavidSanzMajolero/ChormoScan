@@ -7,16 +7,20 @@ public class Pot : MonoBehaviour
     private bool playerInTrigger = false;
     [SerializeField] private GameObject potCamera;
     [SerializeField] private GameObject potArrows;
-    private int[] combination = new int[4]; // Ahora la combinación tiene 4 elementos
-    private bool combinationDone = false;
+    [SerializeField] private GameObject potParticles;
+    [SerializeField] private GameObject greenPotion;
+    private int[] combination = new int[4]; // La combinación tiene 4 elementos
     private int currentStep = 0;  // Paso actual en la combinación
     private bool isInPotionCreationMode = false; // Estado para saber si el jugador está ingresando la combinación
+    private bool hasEnteredFullCombination = false; // Controla si el jugador ya ingresó los 4 dígitos
     #endregion
 
     private void Start()
     {
         potCamera.SetActive(false);
         potArrows.SetActive(false);
+        potParticles.SetActive(false);
+        greenPotion.SetActive(false);
     }
 
     private void OnTriggerEnter(Collider other)
@@ -37,7 +41,7 @@ public class Pot : MonoBehaviour
 
     private void Update()
     {
-        if (playerInTrigger && Input.GetKeyDown(KeyCode.O) && !isInPotionCreationMode)
+        if (playerInTrigger && Input.GetKeyDown(KeyCode.O) && !isInPotionCreationMode && !hasEnteredFullCombination)
         {
             StartPotionCreation();
         }
@@ -47,9 +51,10 @@ public class Pot : MonoBehaviour
             HandlePotionCreation();
         }
 
-        if (Input.GetKeyDown(KeyCode.Escape) || combinationDone)
+        // Cierra la olla si el jugador presiona Escape o si ha completado los 4 pasos
+        if (Input.GetKeyDown(KeyCode.Escape))
         {
-            ClosePot();
+            ClosePot(resetCombination: true); // Reinicia la combinación si el jugador sale sin completar
         }
     }
 
@@ -93,38 +98,43 @@ public class Pot : MonoBehaviour
                 currentStep++;
             }
         }
-        else
-        {
-            // La combinación ya está completa, verificamos si es correcta
-            ValidateCombination();
-        }
-    }
 
-    // Valida la combinación ingresada
-    private void ValidateCombination()
-    {
-        // Ejemplo simple: Si la combinación es 1, 2, 3, 4
-        if (combination[0] == 1 && combination[1] == 2 && combination[2] == 3 && combination[3] == 4)
+        // Verifica si la combinación está completa
+        if (currentStep >= combination.Length)
         {
-            Debug.Log("Combinación correcta, poción creada!");
+            hasEnteredFullCombination = true; // Marca que el jugador ingresó los 4 dígitos
+            potParticles.SetActive(true);
+            greenPotion.SetActive(true);
+            Debug.Log("Combinación completa ingresada y almacenada: " + string.Join(", ", combination));
+            ClosePot(resetCombination: false); // Cierra sin resetear ya que completó la combinación
         }
-        else
-        {
-            Debug.Log("Combinación incorrecta. Intenta de nuevo.");
-        }
-
-        // Marca la combinación como hecha y cierra la olla
-        combinationDone = true;
-        ClosePot();
     }
 
     // Cierra la olla y vuelve al estado normal del juego
-    private void ClosePot()
+    private void ClosePot(bool resetCombination)
     {
         potCamera.SetActive(false);
         potArrows.SetActive(false);
+        isInPotionCreationMode = false;  // Resetea el estado de entrada al caldero
         Time.timeScale = 1;  // Reactiva el juego
-        isInPotionCreationMode = false;  // Resetea el estado
-        currentStep = 0;  // Resetea el paso actual
+
+        if (resetCombination)
+        {
+            currentStep = 0;  // Reinicia el paso actual solo si el jugador salió sin completar
+            Array.Clear(combination, 0, combination.Length); // Borra la combinación actual
+            Debug.Log("Combinación reiniciada. Debes ingresar los 4 dígitos de nuevo.");
+        }
+    }
+
+    // Método para obtener la combinación almacenada
+    public int[] GetCombination()
+    {
+        return combination;
+    }
+
+    // Método para verificar si el jugador ya ingresó la combinación
+    public bool HasEnteredFullCombination()
+    {
+        return hasEnteredFullCombination;
     }
 }
