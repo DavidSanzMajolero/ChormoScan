@@ -12,7 +12,7 @@ public class Pot : MonoBehaviour
     private int[] combination = new int[4]; // La combinación tiene 4 elementos
     private int currentStep = 0;  // Paso actual en la combinación
     private bool isInPotionCreationMode = false; // Estado para saber si el jugador está ingresando la combinación
-    private bool hasEnteredFullCombination = false; // Controla si el jugador ya ingresó los 4 dígitos
+    public bool hasEnteredFullCombination = false; // Controla si el jugador ya ingresó los 4 dígitos
     #endregion
 
     private void Start()
