@@ -7,10 +7,13 @@ public class Interactuable : MonoBehaviour
     #region Variables
     private bool playerInTrigger = false;
     [SerializeField] private GameObject cameraObj;
+
+
     #endregion
     private void Start()
     {
         cameraObj.SetActive(false);
+
     }
 
     private void OnTriggerEnter(Collider other)
@@ -43,6 +46,8 @@ public class Interactuable : MonoBehaviour
     private void Look()
     {
         cameraObj.SetActive(true);
+
+
         Time.timeScale = 0;
     }
     private void Close()
