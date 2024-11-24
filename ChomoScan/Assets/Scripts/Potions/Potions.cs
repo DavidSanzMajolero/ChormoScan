@@ -11,6 +11,12 @@ public class Potions : MonoBehaviour
     [SerializeField] private GameObject potionNum2;
     [SerializeField] private GameObject potionNum3;
     [SerializeField] private Pot pot;  // Referencia al script Pot
+
+    private bool playerLooking = false;
+
+    public bool potionsSelected = false;
+    [SerializeField] public GameObject msg;
+
     private List<int> selectedPotions = new List<int>(); // Lista para rastrear las pociones seleccionadas
     #endregion
 
@@ -55,7 +61,7 @@ public class Potions : MonoBehaviour
             }
 
             // Si la combinación está completa, habilitamos las opciones de las pociones
-            if (pot.HasEnteredFullCombination())
+            if (pot.HasEnteredFullCombination() && playerLooking)
             {
                 ChoosePotion();
             }
@@ -64,6 +70,7 @@ public class Potions : MonoBehaviour
 
     private void Look()
     {
+        playerLooking = true;
         cameraObj.SetActive(true);
         if (pot.HasEnteredFullCombination())
         {
@@ -100,12 +107,15 @@ public class Potions : MonoBehaviour
         // Si ya se han seleccionado dos pociones, cerramos el menú
         if (selectedPotions.Count >= 2)
         {
+            potionsSelected = true;
+            msg.SetActive(true);
             Close();
         }
     }
 
     private void Close()
     {
+        playerLooking = false;
         cameraObj.SetActive(false);
         potionNum1.SetActive(false);
         potionNum2.SetActive(false);

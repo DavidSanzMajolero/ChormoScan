@@ -11,6 +11,7 @@ public class Banners : MonoBehaviour
     [SerializeField] private GameObject test2;
     [SerializeField] private GameObject test3;
     [SerializeField] private GameObject test4;
+    [SerializeField] private DrinkPot potDrinked;
     #endregion
     private void Start()
     {
@@ -19,6 +20,7 @@ public class Banners : MonoBehaviour
         test2.SetActive(false);
         test3.SetActive(false);
         test4.SetActive(false);
+
     }
 
     private void OnTriggerEnter(Collider other)
@@ -51,10 +53,14 @@ public class Banners : MonoBehaviour
     private void Look()
     {
         cameraObj.SetActive(true);
-        test1.SetActive(true);
-        test2.SetActive(true);
-        test3.SetActive(true);
-        test4.SetActive(true);
+        if (potDrinked.potionDrinked)
+        {
+            test1.SetActive(true);
+            test2.SetActive(true);
+            test3.SetActive(true);
+            test4.SetActive(true);
+        }
+
         Time.timeScale = 0;
     }
     private void Close()
