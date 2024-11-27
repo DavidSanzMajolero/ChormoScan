@@ -21,6 +21,7 @@ public class Pot : MonoBehaviour
     [SerializeField] private GameObject arrow3Image;
     [SerializeField] private GameObject arrow4Image;
 
+    private DaltonicManager daltonicManager;
     #endregion
 
     private void Start()
@@ -30,6 +31,7 @@ public class Pot : MonoBehaviour
         potParticles.SetActive(false);
         greenPotion.SetActive(false);
         ResetArrowRotations();
+        daltonicManager = GameObject.FindObjectOfType<DaltonicManager>(); 
     }
 
     private void OnTriggerEnter(Collider other)
@@ -115,6 +117,7 @@ public class Pot : MonoBehaviour
         // Verifica si la combinación está completa
         if (currentStep >= combination.Length)
         {
+            ComprobateCombination();
             hasEnteredFullCombination = true; // Marca que el jugador ingresó los 4 dígitos
             potParticles.SetActive(true);
             greenPotion.SetActive(true);
@@ -177,6 +180,18 @@ public class Pot : MonoBehaviour
     public int[] GetCombination()
     {
         return combination;
+    }
+
+    public void ComprobateCombination()
+    {
+        if (combination[0] != 4) daltonicManager.SumDaltonic();
+        if (combination[2] != 2)
+        {
+            daltonicManager.SumDaltonic();
+            daltonicManager.SumProtan();
+        }
+        if (combination[3] != 2) daltonicManager.SumProtan();
+        daltonicManager.ShowResults();
     }
 
     // Método para verificar si el jugador ya ingresó la combinación
